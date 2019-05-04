@@ -78,7 +78,7 @@ class SearchEngine:
         
         self.query_parser = query_parser
 
-    
+
     def search(self, query_string, result_limit=DEFAULT_RESULT_LIMIT):
         with self.index.searcher() as searcher:
             query = self.query_parser.parse(query_string)
