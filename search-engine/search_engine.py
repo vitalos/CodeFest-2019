@@ -44,13 +44,21 @@ def text_from_html(html):
 
 
 def recurse(directory):
+    """List all files below the given directory. Does not the list the
+    directory itself or any subdirectories.
+    """
     if not directory.is_dir():
         raise ValueError('ERROR: tried to recurse() a path that is not a directory')
-    for path in directory.iterdir():
-        if path.is_dir():
-            yield from recurse(path)
-        else:
-            yield path
+    directories_to_explore = [directory.iterdir()]
+    while directories_to_explore:
+        try:
+            next_path = next(directories_to_explore[-1])
+            if next_path.is_dir():
+                directories_to_explore.append(next_path.iterdir())
+            else:
+                yield next_path
+        except StopIteration:
+            directories_to_explore.pop()
 
 
 class SearchEngine:
@@ -68,7 +76,7 @@ class SearchEngine:
             writer = self.index.writer()
             for document in recurse(sites_directory):
                 with document.open() as doc_stream:
-                    html = BeautifulSoup(doc_stream)
+                    html = BeautifulSoup(doc_stream, 'lxml')
                     writer.add_document(title=str(html.title), content=text_from_html(html), path=str(document))
             writer.commit()
         elif not index_directory.is_dir():
