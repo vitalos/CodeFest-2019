@@ -9,11 +9,11 @@ search_engine = SearchEngine()
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('new1.html')
 
 @app.route('/tutorials')
 def tutorials():
-    return render_template('tutorials.html')
+    return render_template('new2.html')
 
 @app.route('/demo-search')
 def demo_search():
